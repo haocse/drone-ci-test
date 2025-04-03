@@ -1,0 +1,22 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: build
+  image: golang:1.23-alpine
+  settings:
+    dockerfile: Dockerfile
+    tags: 
+      - ${DRONE_COMMIT_SHA:0:8}
+      - latest
+  commands:
+    - go build -tags=viper_bind_struct -ldflags="-w -s" -o main main.go
+
+trigger:
+  branch:
+  - main
+  - dev
+  event:
+  - push
+  - pull_request
